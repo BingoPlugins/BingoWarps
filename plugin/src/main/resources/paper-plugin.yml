@@ -1,0 +1,15 @@
+name: BingoWarps
+version: ${version}
+main: com.bingoplugins.bwarps.Plugin
+description: An easy-to-use warp plugin for Minecraft servers.
+authors:
+  - Pritam
+website: https://github.com/Pritam11638/EasyWarps
+api-version: 1.21.8
+prefix: BingoWarps
+dependencies:
+  server:
+    LuckPerms:
+      load: BEFORE
+      required: true
+      join-classpath: true
