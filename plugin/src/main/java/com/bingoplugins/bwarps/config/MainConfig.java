@@ -1,6 +1,7 @@
 package com.bingoplugins.bwarps.config;
 
 import com.bingoplugins.bwarps.utils.Config;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 
 import java.util.Map;
@@ -21,20 +22,39 @@ public class MainConfig extends Config {
 
     @Override
     protected boolean isConfigValid() {
-        final ConfigurationSection warpSection = getConfigurationSection("warps");
+        ConfigurationSection warpsSec = getConfigurationSection("warps");
 
-        AtomicBoolean verdict = new AtomicBoolean(true);
+        if (warpsSec == null) return true;
 
-        warpSection.getKeys(false).forEach(warpID -> {
-            if (warpSection.get("%s.location".formatted(warpID)) == null) {
-                LOGGER.severe("Warp with ID: %s, has a missing location.".formatted(warpID));
+        final AtomicBoolean verdict = new AtomicBoolean(true);
+
+        warpsSec.getKeys(false).forEach(warpID -> {
+            final ConfigurationSection sec = warpsSec.getConfigurationSection(warpID);
+
+            if (sec == null) {
+                LOGGER.severe("Warp '%s' is not a section.".formatted(warpID));
                 verdict.set(false);
                 return;
             }
 
-            if (warpSection.getLocation("%s.location".formatted(warpID)) == null) {
-                LOGGER.severe("Warp with ID: %s, has an invalid location.".formatted(warpID));
+            final String worldName = sec.getString("world");
+
+            if (worldName == null || Bukkit.getWorld(worldName) == null) {
+                LOGGER.severe("Warp '%s' has invalid or missing world.".formatted(warpID));
                 verdict.set(false);
+            }
+
+            if (!sec.isDouble("x") || !sec.isDouble("y") || !sec.isDouble("z")) {
+                LOGGER.severe("Warp '%s' has missing or invalid coordinates.".formatted(warpID));
+                verdict.set(false);
+            }
+
+            if (!sec.isSet("yaw")) sec.set("yaw", 0.0);
+            if (!sec.isSet("pitch")) sec.set("pitch", 0.0);
+
+            if (sec.getString("name") == null) {
+                LOGGER.warning("Warp '%s' has no name, using ID as fallback.".formatted(warpID));
+                sec.set("name", warpID);
             }
         });
 

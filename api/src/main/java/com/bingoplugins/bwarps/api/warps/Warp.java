@@ -2,18 +2,35 @@ package com.bingoplugins.bwarps.api.warps;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class Warp {
+    @Getter @Setter private volatile String name;
     @Getter @Setter private volatile String description = "";
-    private final Location location;
+    @Getter @Setter private volatile String groupRequired = "";
 
-    public Warp(@NotNull final Location location) {
-        this.location = location;
+    @Getter private final String worldName;
+    @Getter private final double x, y, z;
+    @Getter private final float yaw, pitch;
+
+    public Warp(@NotNull final String name, @NotNull final Location loc) {
+        this.name = name;
+        this.worldName = loc.getWorld().getName();
+        this.x = loc.getX();
+        this.y = loc.getY();
+        this.z = loc.getZ();
+        this.yaw = loc.getYaw();
+        this.pitch = loc.getPitch();
     }
 
-    public Location getLocation() {
-        return location.clone();
+    @Nullable
+    public Location toLocation() {
+        World world = Bukkit.getWorld(worldName);
+        if (world == null) return null;
+        return new Location(world, x, y, z, yaw, pitch);
     }
 }

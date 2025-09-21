@@ -7,9 +7,3 @@ authors:
 website: https://github.com/Pritam11638/EasyWarps
 api-version: 1.21.8
 prefix: BingoWarps
-dependencies:
-  server:
-    LuckPerms:
-      load: BEFORE
-      required: true
-      join-classpath: true
