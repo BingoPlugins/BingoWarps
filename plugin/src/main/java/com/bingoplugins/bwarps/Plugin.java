@@ -4,8 +4,10 @@ import com.bingoplugins.bwarps.api.API;
 import com.bingoplugins.bwarps.api.returncodes.TeleportReturnCode;
 import com.bingoplugins.bwarps.api.returncodes.WarpOperationsReturnCode;
 import com.bingoplugins.bwarps.api.warps.Warp;
+import com.bingoplugins.bwarps.commands.WarpsCommand;
 import com.bingoplugins.bwarps.config.MainConfig;
 import com.bingoplugins.bwarps.warps.WarpManager;
+import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -34,6 +36,10 @@ public class Plugin extends JavaPlugin implements API {
         warpManager = new WarpManager();
 
         warpManager.load();
+
+        getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, event -> {
+            if (mainConfig.getBoolean("enable-command")) event.registrar().register(WarpsCommand.getNode());
+        });
 
         getServer().getScheduler().runTaskTimerAsynchronously(this, () -> {
             warpManager.save();

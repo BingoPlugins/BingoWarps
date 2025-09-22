@@ -14,7 +14,8 @@ public class MainConfig extends Config {
         super("config");
 
         addDefaults(Map.of(
-                "warps", Map.of()
+                "warps", Map.of(),
+                "enable-command", true
         ));
 
         saveConfig();
@@ -42,11 +43,13 @@ public class MainConfig extends Config {
             if (worldName == null || Bukkit.getWorld(worldName) == null) {
                 LOGGER.severe("Warp '%s' has invalid or missing world.".formatted(warpID));
                 verdict.set(false);
+                return;
             }
 
             if (!sec.isDouble("x") || !sec.isDouble("y") || !sec.isDouble("z")) {
                 LOGGER.severe("Warp '%s' has missing or invalid coordinates.".formatted(warpID));
                 verdict.set(false);
+                return;
             }
 
             if (!sec.isSet("yaw")) sec.set("yaw", 0.0);
@@ -57,6 +60,11 @@ public class MainConfig extends Config {
                 sec.set("name", warpID);
             }
         });
+
+        if (isBoolean("enable-command")) {
+            LOGGER.severe("Config value of enable-command should be a boolean.");
+            verdict.set(false);
+        }
 
         return verdict.get();
     }

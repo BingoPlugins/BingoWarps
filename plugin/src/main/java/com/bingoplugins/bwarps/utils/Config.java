@@ -38,7 +38,10 @@ public abstract class Config extends YamlConfiguration {
         catch (IOException e) { LOGGER.log(Level.SEVERE, "Could not save config " + file.getName(), e); }
     }
 
-    public void reload() { loadFile(); }
+    public void reload() {
+        loadFile();
+
+    }
 
     protected abstract boolean isConfigValid();
 }
